@@ -1,0 +1,45 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module turbosoap_ext ! in 
+    interface  ! in :turbosoap_ext
+        module soap_desc ! in :turbosoap_ext:turbogap/src/soap.f90
+            use radial
+            use angular
+            subroutine get_soap(n_sites,n_neigh,n_species,species,species_multiplicity,n_atom_pairs,mask,rjs,thetas,phis,alpha_max,l_max,rcut_hard,rcut_soft,nf,global_scaling,atom_sigma_r,atom_sigma_r_scaling,atom_sigma_t,atom_sigma_t_scaling,amplitude_scaling,radial_enhancement,central_weight,basis,scaling_mode,do_timing,do_derivatives,soap,soap_cart_der) ! in :turbosoap_ext:turbogap/src/soap.f90:soap_desc
+                integer intent(in) :: n_sites
+                integer dimension(:),intent(in) :: n_neigh
+                integer intent(in) :: n_species
+                integer dimension(:,:),intent(in) :: species
+                integer dimension(:),intent(in) :: species_multiplicity
+                integer intent(in) :: n_atom_pairs
+                logical dimension(:,:),intent(in) :: mask
+                real*8 dimension(:),intent(in) :: rjs
+                real*8 dimension(:),intent(in) :: thetas
+                real*8 dimension(:),intent(in) :: phis
+                integer dimension(:),intent(in) :: alpha_max
+                integer intent(in) :: l_max
+                real*8 dimension(:),intent(in) :: rcut_hard
+                real*8 dimension(:),intent(in) :: rcut_soft
+                real*8 dimension(:),intent(in) :: nf
+                real*8 dimension(:),intent(in) :: global_scaling
+                real*8 dimension(:),intent(in) :: atom_sigma_r
+                real*8 dimension(:),intent(in) :: atom_sigma_r_scaling
+                real*8 dimension(:),intent(in) :: atom_sigma_t
+                real*8 dimension(:),intent(in) :: atom_sigma_t_scaling
+                real*8 dimension(:),intent(in) :: amplitude_scaling
+                integer intent(in) :: radial_enhancement
+                real*8 dimension(:),intent(in) :: central_weight
+                character*(*) intent(in) :: basis
+                character*(*) intent(in) :: scaling_mode
+                logical intent(in) :: do_timing
+                logical intent(in) :: do_derivatives
+                real*8 dimension(:,:),intent(inout) :: soap
+                real*8 dimension(:,:,:),intent(inout) :: soap_cart_der
+            end subroutine get_soap
+        end module soap_desc
+    end interface 
+end python module turbosoap_ext
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
