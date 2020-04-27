@@ -8,28 +8,58 @@ import turbosoap_ext
 class TurboSOAPSpecie:
     """Helper class for all the TurboSOAP per-species parameters
     """
-    def __init__(self, rcut, nmax, buffer=0.5,
-        atom_sigma_r = 0.3, atom_sigma_t = 0.5,
-        atom_sigma_r_scaling = 0.05, atom_sigma_t_scaling = 0.025,
-        radial_enchanment = 0, amplitude_scaling = 2.0):
+    def __init__(self, rcut, nmax = 8, buffer = 0.5,
+        atom_sigma_r = 0.5, atom_sigma_t = 0.5,
+        atom_sigma_r_scaling = 0., atom_sigma_t_scaling = 0.,
+        radial_enhancement = 0, amplitude_scaling = 1.0,
+        central_weight = 1., global_scaling = 1., nf = 4.):
         """
+        *************************************************************************************************
         Args:
-            rcut (float): A cutoff for local region in angstroms. Should be
-                bigger than 1 angstrom.
-            nmax (int): The number of radial basis functions.
-            buffer (float): Width of buffer region where radial functions will decay to zero
-            atom_sigma_r (float):
-            atom_sigma_r_scaling (float):
-            atom_sigma_t_scaling (float):
-            radial_enchanment (float):
-            amplitude_scaling (float):
+            rcut (float):                    A cutoff for local region in angstroms. Should be bigger
+                                             than the buffer.
+
+            nmax (int):                      Number of radial basis functions.
+
+            buffer (float):                  Width of buffer region where atomic density field will decay
+                                             to zero
+
+            atom_sigma_r (float):            Width of radial sigma (in Angstrom) at the origin
+
+            atom_sigma_r_scaling (float):    Radial-scaling parameter for radial sigma (dimensionless)
+
+            atom_sigma_t (float):            Width of angular sigma (in Angstrom) at the origin
+
+            atom_sigma_t_scaling (float):    Radial-scaling parameter for angular sigma (dimensionless)
+
+            radial_enhancement (integer):    Distant atomic densities get weighted by the integral of
+                                             a Gaussian located at the same position times the radial
+                                             coordinated raised to this power. It must be 0, 1 or 2
+
+            amplitude_scaling (float):       The atomic densities get weighted, according to the position
+                                             of their atomic centers, by a radial function that decays to
+                                             zero at the cutoff according to a power law, where this
+                                             parameter is the exponent
+
+            global_scaling (float):          Multiplicative factor for the whole atomic density fieldç
+                                             corresponding to this species
+
+            central_weight (float):          Scaling factor for the atomic density field corresponding to
+                                             the central atom, when the centra latom is of this species
+
+            nf (float):                      Decay parameter of the exponential within the buffer region
+        *************************************************************************************************
         """
-        if rcut <= 1.0:
+        if rcut <= buffer:
             raise ValueError(
-                "Rcut should be bigger than 1 angstrom for species {symbol}"
+                "Rcut should be bigger than the buffer region for species {symbol}"
+            )
+        if buffer <= 0.:
+            raise ValueError(
+                "The buffer region should be greater than 0 for species {symbol}"
             )
         self.rcut = rcut
-        if nmax > 12:
+        if nmax < 1 or nmax > 12:
             raise ValueError
         self.nmax = nmax
         self.buffer = buffer
@@ -37,15 +67,15 @@ class TurboSOAPSpecie:
         self.atom_sigma_t = atom_sigma_t
         self.atom_sigma_r_scaling = atom_sigma_r_scaling
         self.atom_sigma_t_scaling = atom_sigma_t_scaling
-        self.radial_enchanment = radial_enchanment
+        self.radial_enhancement = radial_enhancement
         self.amplitude_scaling = amplitude_scaling
-        self.global_scaling = 1.0
-        self.central_weight = 1.0
-        self.nf = 4.0
+        self.global_scaling = global_scaling
+        self.central_weight = central_weight
+        self.nf = nf
 
 default_turbosoap_specie = TurboSOAPSpecie(5.0, 8)
 
-def prepare_turbosoap_configuration(lmax, species):
+def prepare_turbosoap_configuration(lmax = 8, species):
     """Checks configuration parameters of each species and prepares them for fortran interface
     Order is significant. Same species given in different order correspond
     to different descriptor.
@@ -77,7 +107,7 @@ def prepare_turbosoap_configuration(lmax, species):
     config['atom_sigma_t'] = np.empty(num_species, dtype=float)
     config['atom_sigma_t_scaling'] = np.empty(num_species, dtype=float)
     config['amplitude_scaling'] = np.empty(num_species, dtype=float)
-    config['radial_enchanment'] = np.empty(num_species, dtype=float)
+    config['radial_enhancement'] = np.empty(num_species, dtype=int)
     config['nf'] = np.empty(num_species, dtype=float)
     config['global_scaling'] = np.empty(num_species, dtype=float)
     config['central_weight'] = np.empty(num_species, dtype=float)
@@ -107,11 +137,11 @@ def prepare_turbosoap_configuration(lmax, species):
         config['atom_sigma_t'][i] = specie.atom_sigma_t
         config['atom_sigma_t_scaling'][i] = specie.atom_sigma_t_scaling
         config['amplitude_scaling'][i] = specie.amplitude_scaling
-        if specie.radial_enchanment < 0 or specie.radial_enchanment > 2.0:
+        if specie.radial_enhancement < 0 or specie.radial_enhancement > 2:
             raise ValueError(
-                f"Radial enchanment must be in range [0,2]. Radial enchanment: {specie.radial_enchanment}."
+                f"Radial enhancement must be 0, 1 or 2. Radial enhancement: {specie.radial_enhancement}."
             )
-        config['radial_enchanment'][i] = specie.radial_enchanment
+        config['radial_enhancement'][i] = specie.radial_enhancement
         config['nf'][i] = specie.nf
         config['global_scaling'][i] = specie.global_scaling
         config['central_weight'][i] = specie.central_weight
@@ -196,7 +226,7 @@ def calculate_turbosoap_descriptor(config, system, periodic,
             config['rcut_hard'], config['rcut_soft'], config['nf'], config['global_scaling'], 
             config['atom_sigma_r'], config['atom_sigma_r_scaling'], 
             config['atom_sigma_t'], config['atom_sigma_t_scaling'],
-            config['amplitude_scaling'], config['radial_enchanment'], config['central_weight'], 
+            config['amplitude_scaling'], config['radial_enhancement'], config['central_weight'], 
             config['basis'], config['scaling_mode'], do_timing,
             do_derivatives, soap_m, soap_cart_der)
     soap_m = np.ascontiguousarray(soap_m.T)
