@@ -1,0 +1,31 @@
+TurboSOAP Example
+=================
+
+Setup
+-----
+Instantiating the TurboSOAP descriptor is done as follows:
+
+Constructor takes the following parameters:
+
+The TurboSOAP descriptor uses a lot of default parameters which are decent defaults but might not be 
+physically or computationally optimal paremeters to represent atomic environments in specific cases. 
+The parameter tuning enables good accuracy and quick computation times if parameters are chosen judiciously.
+
+In order to tune the parameters we need to use TurboSOAPSpecie to define them
+
+TurboSOAPSpecie
+---------------
+
+
+TurboSOAP can handle both periodic and finite systems with equal ease.
+
+Finite systems
+--------------
+Simple water example:
+
+
+Periodic systems
+----------------
+
+Comparing environments
+----------------------

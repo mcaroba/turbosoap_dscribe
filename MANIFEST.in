@@ -1,0 +1,10 @@
+include README.md
+include setup.py
+include turbosoap_ext.pyf
+include turbogap/src/angular.f90
+include turbogap/src/functions.f90
+include turbogap/src/neighbors.f90
+include turbogap/src/radial.f90
+include turbogap/src/soap.f90
+include turbogap/src/turbogap.f90
+include turbosoap_dscribe/__init__.py

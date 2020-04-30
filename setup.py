@@ -1,4 +1,6 @@
 import sys
+from setuptools import find_packages
+from distutils.core import setup
 
 try:
     from numpy.distutils.core import Extension
@@ -11,7 +13,6 @@ except ImportError:
 if sys.version_info[:2] < (3, 0):
     raise RuntimeError("Python version >= 3.0 required.")
 
-from setuptools import find_packages
 
 #Get lapack for turbosoap (numpy includes one)
 #from numpy.distutils.system_info import get_info
@@ -36,8 +37,8 @@ turbosoap_ext = Extension(name='turbosoap_ext',
 
 if __name__ == "__main__":
     setup(name="turbosoap_dscribe",
-    version="0.1.0",
-    #url="",
+    version="0.1.1",
+    url="",
     description="A Python package for providing turbosoap machine learning descriptor for DScribe",
     long_description="A Python package for providing turbosoap machine learning descriptor for DScribe",
     packages=find_packages(),
