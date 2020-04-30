@@ -1,9 +1,3 @@
-TurboSOAP-DScribe is a python package which provides TurboSOAP machine learning descriptor functionality to DScribe python package [https://singroup.github.io/dscribe/](https://singroup.github.io/dscribe/). Requires DScribe and fortran compiler.
-
-# Example
-For a quick example please see DScribe documentation of TurboSOAP descriptor [link-here]. 
-Some examples below
-```python
 #Simple example with default parameters
 from dscribe.descriptors.turbosoap import TurboSOAP
 from ase.build import molecule
@@ -34,11 +28,8 @@ turbosoap_water = turbosoap.create(water)
 
 print(turbosoap_water.shape)
 print(turbosoap_water)
-```
 
-# Installation
-The latest stable release is available through pip: (add the --user flag if root access is not available)
 
-```sh
-pip install turbosoap-dscribe
-```
+
+
+

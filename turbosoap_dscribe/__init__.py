@@ -1,10 +1,31 @@
+# -*- coding: utf-8 -*-
+"""
+Copyright (c) 2018-2020 by Miguel A. Caro and others.
+
+Licensed under the Creative Commons Attribution-NonCommercial-ShareAlike
+4.0 International Public License (the "Licence"); 
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.
+
+Read the README file for up-to-date information on how to appropriately give attribution to
+the code author(s). If you want to use the TurboGAP code or parts thereof for commercial purposes, contact the
+copyright holder, Miguel A. Caro (mcaroba@gmail.com).
+"""
+
 from dscribe.utils.geometry import get_adjacency_matrix
 import numpy as np
 import scipy.sparse
 from math import sqrt, acos, atan2
 import turbosoap_ext
 
-#Symbol is 
+#TurboSOAPSpecie is used to define per-species parameters
+#prepare_turbosoap_configuration will then compile TurboSOAPSpecie
+#into an format suitable for fortran interface.
+#For consistency all the error checking is done in prepare_turbosoap_configuration
+#where all the information is available.
+
 class TurboSOAPSpecie:
     """Helper class for all the TurboSOAP per-species parameters
     """
@@ -14,7 +35,6 @@ class TurboSOAPSpecie:
         radial_enhancement = 0, amplitude_scaling = 1.0,
         central_weight = 1., global_scaling = 1., nf = 4.):
         """
-        *************************************************************************************************
         Args:
             rcut (float):                    A cutoff for local region in angstroms. Should be bigger
                                              than the buffer.
@@ -48,19 +68,20 @@ class TurboSOAPSpecie:
                                              the central atom, when the centra latom is of this species
 
             nf (float):                      Decay parameter of the exponential within the buffer region
-        *************************************************************************************************
         """
         if rcut <= buffer:
             raise ValueError(
-                "Rcut should be bigger than the buffer region for species {symbol}"
+                "Rcut should be bigger than the buffer region"
             )
         if buffer <= 0.:
             raise ValueError(
-                "The buffer region should be greater than 0 for species {symbol}"
+                "The buffer region should be greater than 0"
             )
         self.rcut = rcut
         if nmax < 1 or nmax > 12:
-            raise ValueError
+            raise ValueError(
+                "nmax should be at least one but at maximum 12"
+            )
         self.nmax = nmax
         self.buffer = buffer
         self.atom_sigma_r = atom_sigma_r
@@ -75,14 +96,14 @@ class TurboSOAPSpecie:
 
 default_turbosoap_specie = TurboSOAPSpecie(5.0, 8)
 
-def prepare_turbosoap_configuration(lmax = 8, species):
+def prepare_turbosoap_configuration(species, lmax = 8):
     """Checks configuration parameters of each species and prepares them for fortran interface
     Order is significant. Same species given in different order correspond
     to different descriptor.
     Args:
         lmax (int): The maximum degree of spherical harmonics.
         species (iterable): List of TurboSOAPSpecie 
-    Return:
+    Returns:
         Configuration values and np.ndarray which are in correct format 
         for turbosoap fortran interface
     """

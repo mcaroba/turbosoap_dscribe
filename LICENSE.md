@@ -5,7 +5,7 @@ Copyright (c) 2018-2020 by Miguel A. Caro and others.
 The **TurboGAP** code is provided to the community, in the hopes that it will be useful but
 with no warranty whatsoever, under the [Creative Commons Attribution-NonCommercial-ShareAlike
 4.0 International Public License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
-Reade the README file for up-to-date information on how to appropriately give attribution to
+Read the README file for up-to-date information on how to appropriately give attribution to
 the code author(s).
 
 If you want to use the TurboGAP code or parts thereof for commercial purposes, contact the
