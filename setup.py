@@ -21,6 +21,12 @@ if sys.version_info[:2] < (3, 0):
 #    raise RuntimeError("Numpy lapack not found. Necessary for turbosoap")
 #lapack_link = lapack['libraries'] + ["-L" + d for d in lapack["library_dirs"]]
 
+#Get lapack info
+import numpy.distutils.system_info as sysinfo
+lapack_opt = sysinfo.get_info('lapack_opt')
+libraries = lapack_opt['libraries']
+library_dirs = lapack_opt['library_dirs']
+
 turbosoap_ext = Extension(name='turbosoap_ext',
         sources = ['turbosoap_ext.pyf', 
             'turbogap/src/angular.f90',
@@ -29,18 +35,18 @@ turbosoap_ext = Extension(name='turbosoap_ext',
             'turbogap/src/radial.f90',
             'turbogap/src/soap.f90' ,
         ],
-        libraries=['lapack']
-        #extra_compile_args=["--link-lapack"],
-        #extra_link_args = lapack['libraries'] + ["-L" + ]
+        #libraries=['lapack']
+        libraries=libraries,
+        library_dirs=library_dirs
     )
 
 
 if __name__ == "__main__":
     setup(name="turbosoap_dscribe",
-    version="0.1.1",
+    version="0.1.2",
     url="",
-    description="A Python package for providing turbosoap machine learning descriptor for DScribe",
-    long_description="A Python package for providing turbosoap machine learning descriptor for DScribe",
+    description="An optional dependency of DScribe which provides TurboSOAP machine learning descriptor",
+    long_description="An optional dependency of DScribe which provides TurboSOAP machine learning descriptor",
     packages=find_packages(),
     ext_modules=[turbosoap_ext],
     setup_requires=["numpy"],

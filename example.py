@@ -1,5 +1,5 @@
 #Simple example with default parameters
-from dscribe.descriptors.turbosoap import TurboSOAP
+from dscribe.descriptors import TurboSOAP
 from ase.build import molecule
 
 turbosoap = TurboSOAP(species = {'H': None,  'O': None}, lmax=8)
@@ -14,7 +14,7 @@ print(turbosoap_water.shape)
 print(turbosoap_water)
 
 #More involved example with explicit parameters
-from turbosoap_dscribe import TurboSOAPSpecie
+from dscribe.descriptors import TurboSOAPSpecie
 
 # More control on each species
 H_config = TurboSOAPSpecie(rcut=5.0, nmax=8, buffer=0.5, atom_sigma_r = 0.3, atom_sigma_t = 0.5,
