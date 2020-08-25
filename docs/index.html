@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,13 +34,8 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="TurboSOAP Example" href="examples.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -49,7 +49,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> turbosoap_dscribe
+            <a href="#" class="icon icon-home" alt="Documentation Home"> turbosoap_dscribe
           
 
           
@@ -72,6 +72,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -79,14 +80,25 @@
               
             
             
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">TurboSOAP Example</a></li>
-<li class="toctree-l1"><a class="reference internal" href="API.html">TurboSOAP API</a></li>
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">TurboSOAP_DScribe</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
 </ul>
-
+</li>
+<li><a class="reference internal" href="#turbosoap-a-fast-implementation-of-soap">TurboSOAP - a fast implementation of SOAP</a><ul>
+<li><a class="reference internal" href="#setup">Setup</a></li>
+<li><a class="reference internal" href="#turbosoapspecie">TurboSOAPSpecie</a></li>
+<li><a class="reference internal" href="#comparing-environments">Comparing environments</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</div>
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -125,7 +137,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
       <li>TurboSOAP_DScribe</li>
     
@@ -151,15 +163,148 @@
 <p>TurboSOAP-DScribe is a python package which provides TurboSOAP machine learning
 descriptor functionality to DScribe python package
 <a class="reference external" href="https://singroup.github.io/dscribe/">https://singroup.github.io/dscribe/</a>.
-Requires DScribe and fortran compiler.</p>
+Requires DScribe, Fortran compiler and LAPACK libraries.</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Easiest way to install is to install via pip.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip install turbosoap_dscribe
+</pre></div>
 </div>
-<div class="section" id="capabilities">
-<h1>Capabilities<a class="headerlink" href="#capabilities" title="Permalink to this headline">¶</a></h1>
-<p>Please check out the dscribe documentation full the capabilities of the dscribe itself.
-We provide few examples on how to use TurboSOAP itself:</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="examples.html"><span class="doc">Examples</span></a></p></li>
+<p>To install the latest development version, clone the source code from
+github and install with pip from local file:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/mcaroba/turbosoap_dscribe
+<span class="nb">cd</span> turbosoap_dscribe
+pip install .
+</pre></div>
+</div>
+<p>If installation fails, please make sure that you have the prerequisites. Especially Fortran compiler and LAPACK libraries.
+The setup.py script uses numpy.distutils to find Fortran compiler and LAPACK lbiraries.</p>
+</div>
+</div>
+<div class="section" id="turbosoap-a-fast-implementation-of-soap">
+<h1>TurboSOAP - a fast implementation of SOAP<a class="headerlink" href="#turbosoap-a-fast-implementation-of-soap" title="Permalink to this headline">¶</a></h1>
+<p>TurboSOAP is an implementation of the SOAP scheme which enables more control
+over the various aspects of the descriptor</p>
+<div class="section" id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<p>Instantiating the TurboSOAP descriptor is done as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dscribe.descriptors</span> <span class="kn">import</span> <span class="n">TurboSOAP</span>
+
+<span class="n">turbosoap</span> <span class="o">=</span> <span class="n">TurboSOAP</span><span class="p">(</span><span class="n">species</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span> <span class="n">lmax</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The constructor takes the following parameters:</p>
+<dl class="py method">
+<dt id="dscribe.descriptors.turbosoap.TurboSOAP.__init__">
+<code class="sig-prename descclassname">TurboSOAP.</code><code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">species</span></em>, <em class="sig-param"><span class="n">lmax</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="n">periodic</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dscribe/descriptors/turbosoap.html#TurboSOAP.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dscribe.descriptors.turbosoap.TurboSOAP.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Each species requires an array of parameters to configure the TurboSOAP descriptor.
+TurboSOAPSpecie(<code class="xref py py-class docutils literal notranslate"><span class="pre">turbosoap_dscribe.TurboSOAPSpecie</span></code>) provides maximal control
+for each species. Each species <em>not</em> defined will use a default value.
+See the TurboSOAPSpecie documentation for detailed parameter definitions.
+:param lmax: The maximum degree of spherical harmonics.
+:type lmax: int
+:param species: Dictionary where key is the chemical symbol or atomic number</p>
+<blockquote>
+<div><p>and the value is TurboSOAPSpecie(<code class="xref py py-class docutils literal notranslate"><span class="pre">turbosoap_dscribe.TurboSOAPSpecie</span></code>). If
+the value of key is set to None then the species will have default configuration</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>periodic</strong> (<em>bool</em>) – Determines whether the system is considered to be
+periodic.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>After creation the TurboSOAP descriptor can applied to atomic structures:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#Water molecule</span>
+<span class="n">water</span> <span class="o">=</span> <span class="n">molecule</span><span class="p">(</span><span class="s2">&quot;H2O&quot;</span><span class="p">)</span>
+
+<span class="c1">#Create TurboSOAP output for water</span>
+<span class="n">turbosoap_water</span> <span class="o">=</span> <span class="n">turbosoap</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">water</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">turbosoap_water</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">turbosoap_water</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The TurboSOAP descriptor uses a lot of default parameters which are decent defaults but might not be
+physically or computationally optimal paremeters to represent atomic environments in specific cases.
+The parameters enable good accuracy and quick computation times if they are chosen judiciously.</p>
+<p>In order to tune the parameters we need to use TurboSOAPSpecie to define them.</p>
+</div>
+<div class="section" id="turbosoapspecie">
+<h2>TurboSOAPSpecie<a class="headerlink" href="#turbosoapspecie" title="Permalink to this headline">¶</a></h2>
+<p>TurboSOAPSpecie can be used to define all the per-species parameters used by TurboSOAP.
+A more involved example using TurboSOAPSpecies:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">turbosoap_dscribe</span> <span class="kn">import</span> <span class="n">TurboSOAPSpecie</span>
+
+<span class="c1"># More control on each species</span>
+<span class="n">H_config</span> <span class="o">=</span> <span class="n">TurboSOAPSpecie</span><span class="p">(</span><span class="n">rcut</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">nmax</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">buffer</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">atom_sigma_r</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">atom_sigma_t</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">atom_sigma_r_scaling</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">atom_sigma_t_scaling</span> <span class="o">=</span> <span class="mf">0.025</span><span class="p">)</span>
+<span class="n">O_config</span> <span class="o">=</span> <span class="n">TurboSOAPSpecie</span><span class="p">(</span><span class="n">rcut</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">nmax</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">buffer</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">atom_sigma_r</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">atom_sigma_t</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
+        <span class="n">atom_sigma_r_scaling</span> <span class="o">=</span> <span class="mf">0.03</span><span class="p">,</span> <span class="n">atom_sigma_t_scaling</span> <span class="o">=</span> <span class="mf">0.020</span><span class="p">)</span>
+
+<span class="n">turbosoap</span> <span class="o">=</span> <span class="n">TurboSOAP</span><span class="p">(</span><span class="n">species</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="n">H_config</span><span class="p">,</span>  <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="n">O_config</span><span class="p">},</span> <span class="n">lmax</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="dscribe.descriptors.turbosoap.TurboSOAPSpecie.__init__">
+<code class="sig-prename descclassname">TurboSOAPSpecie.</code><code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rcut</span></em>, <em class="sig-param"><span class="n">nmax</span><span class="o">=</span><span class="default_value">8</span></em>, <em class="sig-param"><span class="n">buffer</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">atom_sigma_r</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">atom_sigma_t</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">atom_sigma_r_scaling</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">atom_sigma_t_scaling</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">radial_enhancement</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">amplitude_scaling</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">central_weight</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">global_scaling</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">nf</span><span class="o">=</span><span class="default_value">4.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dscribe/descriptors/turbosoap.html#TurboSOAPSpecie.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dscribe.descriptors.turbosoap.TurboSOAPSpecie.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rcut</strong> (<em>float</em>) – A cutoff for local region in angstroms. Should be bigger
+than the buffer.</p></li>
+<li><p><strong>nmax</strong> (<em>int</em>) – Number of radial basis functions.</p></li>
+<li><p><strong>buffer</strong> (<em>float</em>) – Width of buffer region where atomic density field will decay
+to zero</p></li>
+<li><p><strong>atom_sigma_r</strong> (<em>float</em>) – Width of radial sigma (in Angstrom) at the origin</p></li>
+<li><p><strong>atom_sigma_r_scaling</strong> (<em>float</em>) – Radial-scaling parameter for radial sigma (dimensionless)</p></li>
+<li><p><strong>atom_sigma_t</strong> (<em>float</em>) – Width of angular sigma (in Angstrom) at the origin</p></li>
+<li><p><strong>atom_sigma_t_scaling</strong> (<em>float</em>) – Radial-scaling parameter for angular sigma (dimensionless)</p></li>
+<li><p><strong>radial_enhancement</strong> (<em>integer</em>) – Distant atomic densities get weighted by the integral of
+a Gaussian located at the same position times the radial
+coordinated raised to this power. It must be 0, 1 or 2</p></li>
+<li><p><strong>amplitude_scaling</strong> (<em>float</em>) – The atomic densities get weighted, according to the position
+of their atomic centers, by a radial function that decays to
+zero at the cutoff according to a power law, where this
+parameter is the exponent</p></li>
+<li><p><strong>global_scaling</strong> (<em>float</em>) – Multiplicative factor for the whole atomic density fieldç
+corresponding to this species</p></li>
+<li><p><strong>central_weight</strong> (<em>float</em>) – Scaling factor for the atomic density field corresponding to
+the central atom, when the centra latom is of this species</p></li>
+<li><p><strong>nf</strong> (<em>float</em>) – Decay parameter of the exponential within the buffer region</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="comparing-environments">
+<h2>Comparing environments<a class="headerlink" href="#comparing-environments" title="Permalink to this headline">¶</a></h2>
+<p>A quick example on how to compare environments. The quantity of interest is the similarity kernel between
+two atomic environments which is between zero and one. Zero indicates that environments are not similar and one indicates that
+the environments are the same. The kernel is computed as a dot product between two TurboSOAP vectors:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dscribe.descriptors</span> <span class="kn">import</span> <span class="n">TurboSOAP</span>
+<span class="kn">from</span> <span class="nn">ase.build</span> <span class="kn">import</span> <span class="n">molecule</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">turbosoap</span> <span class="o">=</span> <span class="n">TurboSOAP</span><span class="p">(</span><span class="n">species</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span> <span class="n">lmax</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">water</span> <span class="o">=</span> <span class="n">molecule</span><span class="p">(</span><span class="s2">&quot;H2O&quot;</span><span class="p">)</span>
+<span class="n">turbosoap_water</span> <span class="o">=</span> <span class="n">turbosoap</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">water</span><span class="p">)</span>
+<span class="c1">#Compare similarity of hydrogen and oxygen environments</span>
+<span class="c1">#Index 0 has oxygen atom and indices 1,2 have hydrogen atoms.</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">water</span><span class="o">.</span><span class="n">get_chemical_symbols</span><span class="p">())</span>
+
+<span class="c1">#Compare hydrogen environments. Result should be close to one </span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">turbosoap_water</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">turbosoap_water</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+
+<span class="c1">#Compare oxygen-hydrogen. </span>
+<span class="c1">#The result should be quite small as the hydrogen and oxygen environments are quite different</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">turbosoap_water</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">turbosoap_water</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="references">
 <h1>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h1>
@@ -172,8 +317,6 @@ Miguel Caro, Phys. Rev. B 100, 024112 (2019),
 “On representing chemical environments”, Albert P. Bartók, Risi Kondor, and
 Gábor Csányi, Phys. Rev. B 87, 184115, (2013),
 <a class="reference external" href="https://doi.org/10.1103/PhysRevB.87.184115">https://doi.org/10.1103/PhysRevB.87.184115</a>.</p>
-<div class="toctree-wrapper compound">
-</div>
 </div>
 
 
@@ -182,23 +325,24 @@ Gábor Csányi, Phys. Rev. B 87, 184115, (2013),
           </div>
           <footer>
   
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="examples.html" class="btn btn-neutral float-right" title="TurboSOAP Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-    </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020 Miguel Caro
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -209,7 +353,6 @@ Gábor Csányi, Phys. Rev. B 87, 184115, (2013),
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
