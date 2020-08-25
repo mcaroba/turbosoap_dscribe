@@ -32,6 +32,8 @@ author = 'Miguel Caro, Jouko Lehtomäki'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
 ]
 

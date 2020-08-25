@@ -14,7 +14,7 @@ the code author(s). If you want to use the TurboGAP code or parts thereof for co
 copyright holder, Miguel A. Caro (mcaroba@gmail.com).
 """
 
-from dscribe.utils.geometry import get_adjacency_matrix
+from dscribe.utils.geometry import get_adjacency_matrix, get_extended_system
 import numpy as np
 import scipy.sparse
 from math import sqrt, acos, atan2
@@ -65,21 +65,21 @@ def prepare_turbosoap_configuration(species, lmax = 8):
     for i,specie in enumerate(species):
         if specie.rcut <= 1.0:
             raise ValueError(
-            f"Rcut should be bigger than 1 angstrom for species {specie.rcut}"
+            f"Rcut should be bigger than 1 angstrom for species {specie.debug_name}"
             )
         config['rcut_hard'][i] = specie.rcut
         if specie.buffer < 0.0 or specie.buffer > specie.rcut:
             raise ValueError(
-                f"Buffer must be positive and smaller than rcut. Buffer: {specie.buffer}"
+                f"Buffer must be positive and smaller than rcut for species {specie.debug_name}. Buffer: {specie.buffer}"
             )
         config['rcut_soft'][i] = specie.rcut - specie.buffer
         if specie.nmax < 1:
             raise ValueError(
-            f"Must have at least one radial basis function. nmax={specie.nmax}"
+            f"Must have at least one radial basis function for species {specie.debug_name}. nmax={specie.nmax}"
             )
         if specie.nmax > 12:
             raise ValueError(
-            f"Too many basis functions. Orthonormalization is numerically unstable." 
+            f"Too many basis functions for species {specie.debug_name}. Orthonormalization is numerically unstable." 
             "nmax={specie.nmax}."
             )
         config['nmax'][i] = specie.nmax
@@ -105,18 +105,20 @@ def prepare_turbosoap_configuration(species, lmax = 8):
 
 def calculate_turbosoap_descriptor(config, system, periodic, 
     atomic_numbers_to_indices, atomic_numbers_to_rcuts):
-    n_sites = len(system)
     rcuts = [atomic_numbers_to_rcuts[ n ] for n in system.numbers]
+    max_rcut = max(rcuts)
+    if periodic:
+        original_system = system
+        system = get_extended_system(system, max_rcut, return_cell_indices=False)
+        rcuts = [atomic_numbers_to_rcuts[ n ] for n in system.numbers]
+    n_sites = len(system)
     species = [atomic_numbers_to_indices[ n ] for n in system.numbers]
     f_species = np.empty((1,n_sites), dtype=int, order='F')
     f_species[0,:] = np.array(species, dtype=int) + 1 #fortran indexing from 1
     assert len(atomic_numbers_to_indices) == len(config['rcut_hard'])
-    max_rcut = max(rcuts)
     n_species = len(atomic_numbers_to_indices)
     species_multiplicity = np.ones(n_sites, dtype=int)
     positions = system.positions
-    if periodic:
-        system = get_extended_system(system, max_rcut, return_cell_indices=False)
     adj_m = get_adjacency_matrix(max_rcut, positions, system.positions)
     adj_l = get_adjacency_list_rcut(adj_m, rcuts)
 
@@ -154,7 +156,7 @@ def calculate_turbosoap_descriptor(config, system, periodic,
     do_derivatives = False 
     n_soap = config['num_components']
     soap_m = np.zeros((n_soap, n_sites), order='F')
-    soap_cart_der = np.zeros((3, n_soap, n_atom_pairs), order='F')
+    soap_cart_der = np.empty((3, n_soap, n_atom_pairs), order='F')
     #soap_cart_der = np.empty((1,1,1))
     if False:
         print(soap_m.shape)
@@ -181,6 +183,10 @@ def calculate_turbosoap_descriptor(config, system, periodic,
             config['basis'], config['scaling_mode'], do_timing,
             do_derivatives, soap_m, soap_cart_der)
     soap_m = np.ascontiguousarray(soap_m.T)
+    if periodic:
+        #We "map" results back to original systems. We assume that the order of the atoms is unchanged i.e. the original unit cells atoms are first
+        num_original_sites = len(original_system)
+        soap_m = soap_m[0:num_original_sites]
     return soap_m
 
 #Multiple rcut aware version of adjacency list construction.

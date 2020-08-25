@@ -14,16 +14,10 @@ if sys.version_info[:2] < (3, 0):
     raise RuntimeError("Python version >= 3.0 required.")
 
 
-#Get lapack for turbosoap (numpy includes one)
-#from numpy.distutils.system_info import get_info
-#lapack = get_info("lapack_opt")
-#if len(lapack) == 0:
-#    raise RuntimeError("Numpy lapack not found. Necessary for turbosoap")
-#lapack_link = lapack['libraries'] + ["-L" + d for d in lapack["library_dirs"]]
-
-#Get lapack info
 import numpy.distutils.system_info as sysinfo
 lapack_opt = sysinfo.get_info('lapack_opt')
+if len(lapack_opt) == 0:
+    raise RuntimeError('No Lapack found, please install Lapack libraries to install turbosoap_dscribe')
 libraries = lapack_opt['libraries']
 library_dirs = lapack_opt['library_dirs']
 
@@ -35,7 +29,6 @@ turbosoap_ext = Extension(name='turbosoap_ext',
             'turbogap/src/radial.f90',
             'turbogap/src/soap.f90' ,
         ],
-        #libraries=['lapack']
         libraries=libraries,
         library_dirs=library_dirs
     )
