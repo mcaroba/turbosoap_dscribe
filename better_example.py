@@ -13,7 +13,7 @@ turbosoap_water = turbosoap.create(water)
 print(turbosoap_water.shape)
 print(turbosoap_water)
 
-from turbosoap_dscribe import TurboSOAPSpecie
+from dscribe.descriptors.turbosoap import TurboSOAPSpecie
 
 # More control on each species
 H_config = TurboSOAPSpecie(rcut=5.0, nmax=8, buffer=0.5, atom_sigma_r = 0.3, atom_sigma_t = 0.5,
